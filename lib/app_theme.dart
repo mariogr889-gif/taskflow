@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'app_colors.dart';
 
-/// Tema global de la aplicación (colores + estilo de formularios).
 class AppTheme {
   AppTheme._();
 
