@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app_theme.dart';
 import 'taskflow_page.dart';
 
-void main() => runApp(const TaskFlowApp());
+void main() => runApp(const ProviderScope(child: TaskFlowApp()));
 
 class TaskFlowApp extends StatelessWidget {
   const TaskFlowApp({super.key});

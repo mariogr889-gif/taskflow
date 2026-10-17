@@ -4,14 +4,17 @@ import 'app_colors.dart';
 import 'app_dimensions.dart';
 
 /// Barra superior: alto 56 · título 22 pt negrita · avatar ø36.
+/// Si se pasa [onCloud] aparece el botón "Tareas en la nube".
 class TopBar extends StatelessWidget {
   final String title;
   final String avatarLetter;
+  final VoidCallback? onCloud;
 
   const TopBar({
     super.key,
     required this.title,
     required this.avatarLetter,
+    this.onCloud,
   });
 
   @override
@@ -31,21 +34,32 @@ class TopBar extends StatelessWidget {
                 color: AppColors.primaryDark,
               ),
             ),
-            Container(
-              width: AppDimensions.avatarSize,
-              height: AppDimensions.avatarSize,
-              decoration: const BoxDecoration(
-                color: AppColors.chipBg,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                avatarLetter,
-                style: const TextStyle(
-                  color: AppColors.primaryDark,
-                  fontWeight: FontWeight.w600,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (onCloud != null)
+                  IconButton(
+                    tooltip: 'Tareas en la nube',
+                    icon: const Icon(Icons.cloud, color: AppColors.primaryDark),
+                    onPressed: onCloud,
+                  ),
+                Container(
+                  width: AppDimensions.avatarSize,
+                  height: AppDimensions.avatarSize,
+                  decoration: const BoxDecoration(
+                    color: AppColors.chipBg,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    avatarLetter,
+                    style: const TextStyle(
+                      color: AppColors.primaryDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

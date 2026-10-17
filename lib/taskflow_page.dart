@@ -7,6 +7,7 @@ import 'nueva_tarea_screen.dart';
 import 'priority_chip.dart';
 import 'quote_card.dart';
 import 'section_header.dart';
+import 'tareas_remotas_screen.dart';
 import 'task.dart';
 import 'top_bottom_bars.dart';
 import 'validadores_tarea.dart';
@@ -92,7 +93,15 @@ class _TaskflowPageState extends State<TaskflowPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TopBar(title: 'TaskFlow', avatarLetter: 'M'),
+              TopBar(
+                title: 'TaskFlow',
+                avatarLetter: 'M',
+                onCloud: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const TareasRemotasScreen()),
+                ),
+              ),
               const SizedBox(height: 8),
               HeaderCard(
                 greeting: '¡Hola, Mario!',
