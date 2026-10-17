@@ -71,7 +71,7 @@ class _RingPainter extends CustomPainter {
       ..strokeWidth = stroke;
 
     final arc = Paint()
-      ..color = AppColors.gold
+      ..color = AppColors.accent
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = stroke;

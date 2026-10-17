@@ -80,7 +80,7 @@ class BottomBar extends StatelessWidget {
       height: AppDimensions.bottomBarHeight,
       decoration: BoxDecoration(
         color: AppColors.white,
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
+        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.05))),
       ),
       child: SafeArea(
         top: false,

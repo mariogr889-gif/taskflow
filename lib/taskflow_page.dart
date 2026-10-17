@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_dimensions.dart';
 import 'header_card.dart';
+import 'nueva_tarea_screen.dart';
 import 'priority_chip.dart';
 import 'quote_card.dart';
 import 'section_header.dart';
 import 'task.dart';
 import 'top_bottom_bars.dart';
+import 'validadores_tarea.dart';
 
 class TaskflowPage extends StatefulWidget {
   const TaskflowPage({super.key});
@@ -54,6 +56,30 @@ class _TaskflowPageState extends State<TaskflowPage> {
     });
   }
 
+  /// Estado de la APP: solo entran tareas ya validadas.
+  /// Defensa en profundidad: se valida otra vez aunque la UI ya lo hizo.
+  void _addTask(Task task) {
+    if (ValidadoresTarea.titulo(task.title) != null) return;
+    setState(() => _tasks = [..._tasks, task]);
+  }
+
+  Future<void> _abrirNuevaTarea() async {
+    final nueva = await Navigator.push<Task>(
+      context,
+      MaterialPageRoute(builder: (_) => const NuevaTareaScreen()),
+    );
+
+    // El usuario regresó sin guardar.
+    if (nueva == null) return;
+    // Safe-await: la pantalla pudo destruirse durante el await.
+    if (!mounted) return;
+
+    _addTask(nueva);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Tarea "${nueva.title}" creada')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final completedCount = _tasks.where((t) => t.isCompleted).length;
@@ -71,12 +97,14 @@ class _TaskflowPageState extends State<TaskflowPage> {
               HeaderCard(
                 greeting: '¡Hola, Mario!',
                 date: 'Viernes, 16 de Octubre',
-                subtitle: 'Tienes ${_tasks.length - completedCount} tareas pendientes',
+                subtitle:
+                    'Tienes ${_tasks.length - completedCount} tareas pendientes',
                 progress: progress,
               ),
               const SizedBox(height: 48),
               const QuoteCard(
-                quote: 'El éxito es la suma de pequeños esfuerzos repetidos día tras día.',
+                quote:
+                    'El éxito es la suma de pequeños esfuerzos repetidos día tras día.',
                 author: 'Robert Collier',
               ),
               const SizedBox(height: 24),
@@ -89,23 +117,30 @@ class _TaskflowPageState extends State<TaskflowPage> {
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.margin),
                 itemCount: _tasks.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppDimensions.gap),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppDimensions.gap),
                 itemBuilder: (context, index) {
                   final task = _tasks[index];
+                  final subtitulo = task.dueDate == null
+                      ? task.category
+                      : '${task.category} · vence ${formatearFecha(task.dueDate!)}';
                   return Container(
-                    padding: const EdgeInsets.all(AppDimensions.taskCardPadding),
+                    padding:
+                        const EdgeInsets.all(AppDimensions.taskCardPadding),
                     decoration: BoxDecoration(
                       color: AppColors.white,
-                      borderRadius: BorderRadius.circular(AppDimensions.taskCardRadius),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.taskCardRadius),
                       border: Border.all(color: AppColors.chipBg),
                     ),
                     child: Row(
                       children: [
                         Checkbox(
                           value: task.isCompleted,
-                          activeColor: AppColors.gold,
+                          activeColor: AppColors.accent,
                           onChanged: (_) => _toggleTask(task.id),
                         ),
                         const SizedBox(width: 8),
@@ -126,7 +161,7 @@ class _TaskflowPageState extends State<TaskflowPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                task.category,
+                                subtitulo,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textMuted,
@@ -145,6 +180,11 @@ class _TaskflowPageState extends State<TaskflowPage> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text('Nueva tarea'),
+        onPressed: _abrirNuevaTarea,
       ),
       bottomNavigationBar: BottomBar(
         currentIndex: _currentIndex,
